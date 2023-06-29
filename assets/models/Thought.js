@@ -1,31 +1,40 @@
 const { Schema, model } = require("mongoose");
-const { userSchema } = require("./User");
-const { reactionSchema } = require("./Reaction");
+const reactionSchema = require("./Reaction");
+
 // Schema to create thought model
 const thoughtSchema = new Schema(
   {
-    thought: {
+    thoughtText: {
       type: String,
-      trim: true,
       required: true,
-      unique: true,
+      trim: true,
+      minlength: 3,
+      maxlength: 280,
     },
-    //use getter method to format timestamp on query?
     createdAt: {
       type: Date,
-      // Sets value to current date
-      default: Date.now(),
+      default: Date.now,
+      get: (time) => new Date(time).toLocaleString(),
     },
-    userName: { type: String, required: true },
+    username: {
+      type: String,
+      required: true,
+    },
     reactions: [reactionSchema],
   },
   {
     toJSON: {
+      virtuals: true,
       getters: true,
     },
+    id: false,
   }
 );
+//virtual for getting the amount of reactions
+thoughtSchema.virtual("reactionCount").get(function () {
+  return this.reactions.length;
+});
 
-const Thought = model("thought", thoughtSchema);
+const Thought = model("Thought", thoughtSchema);
 
 module.exports = Thought;
