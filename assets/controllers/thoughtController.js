@@ -27,7 +27,7 @@ module.exports = {
     }
   },
   // Add a thought
-  async createThought(req, res) {
+  async addThought(req, res) {
     try {
       const newThought = await Thought.create(req.body);
       const user = await User.findOneAndUpdate(
